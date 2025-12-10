@@ -1,16 +1,15 @@
 {
   "version": 2,
   "buildCommand": "pip install -r api/requirements.txt",
-  "builds": [
-    {
-      "src": "api/app.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "50mb",
-        "runtime": "python3.10"
-      }
+
+  "functions": {
+    "api/app.py": {
+      "runtime": "python3.10",
+      "maxDuration": 30,
+      "memory": 1024
     }
-  ],
+  },
+
   "rewrites": [
     {
       "source": "/static/(.*)",
@@ -25,6 +24,7 @@
       "destination": "/api/app.py"
     }
   ],
+
   "headers": [
     {
       "source": "/api/(.*)",
@@ -36,6 +36,7 @@
       ]
     }
   ],
+
   "env": {
     "PYTHONUNBUFFERED": "1",
     "VERCEL_ENV": "production"
