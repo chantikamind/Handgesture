@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "pip install -r api/requirements.txt",
 
   "functions": {
     "api/app.py": {
@@ -9,6 +8,8 @@
       "memory": 1024
     }
   },
+
+  "buildCommand": "pip install -r api/requirements.txt",
 
   "rewrites": [
     {
