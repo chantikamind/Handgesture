@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hand Gesture Recognition - Real-Time</title>
+  <style>
+    /* Simple, minimal UI */
+    :root { --accent: #2b6cb0; }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial; margin: 0; background: #f7fafc; color: #111827; }
+    .wrap { max-width: 820px; margin: 18px auto; padding: 18px; }
+    header { text-align: left; margin-bottom: 12px; }
+    header h1 { margin: 0 0 4px 0; font-size: 1.25rem; }
+    header p { margin: 0; font-size: 0.9rem; color: #4b5563; }
+    .video { display: block; width: 100%; max-width: 640px; margin: 14px auto; background: #000; border-radius: 6px; overflow: hidden; }
+    .video img { width: 100%; height: auto; display: block; }
+    .info { display: flex; gap: 10px; align-items: center; justify-content: space-between; margin-top: 10px; }
+    .info .left { display:flex; gap:12px; align-items:center; }
+    .badge { background: white; padding: 8px 12px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); font-weight:600; }
+    .controls { display:flex; gap:8px; align-items:center; }
+    button { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight:600; }
+    button.secondary { background: #6b7280; }
+    a.link { color: var(--accent); text-decoration: none; font-weight:600; }
+    footer { margin-top: 14px; font-size: 0.85rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+    <header>
+      <h1>Hand Gesture Recognition</h1>
+      <p>Realtime detection — simple controls below.</p>
+    </header>
+
+    <div class="video">
+      <img id="video-stream" src="/video_feed" alt="Live Camera Feed">
+    </div>
+
+    <div class="info">
+      <div class="left">
+        <div class="badge">Gesture: <span id="gesture-name">-</span></div>
+        <div class="badge">Confidence: <span id="confidence">0%</span></div>
+        <div class="badge">Saved: <span id="saved-count">0</span></div>
+      </div>
+
+      <div class="controls">
+        <button onclick="onSave()">Save</button>
+        <button class="secondary" id="auto-save-btn" onclick="toggleAutoSave()">Auto-save: OFF</button>
+        <button class="secondary" onclick="downloadExcel()">Download Excel</button>
+      </div>
+    </div>
+
+    <footer>
+      <span id="status">System ready.</span>
+      &nbsp;•&nbsp; <a class="link" href="/video_feed" target="_blank">Open stream</a>
+    </footer>
+  </div>
+
+<script>
+  let lastSavedFeatures = null;
+
+  async function onSave() {
+    // Prompt for a gesture name and save current features
+    const name = window.prompt('Enter gesture name to save:');
+    if (!name) return;
+
+    try {
+      const resp = await fetch('/api/gesture');
+      const data = await resp.json();
+      if (!data.features) {
+        alert('No hand detected. Please show your hand to the camera.');
+        return;
+      }
+
+      const saveResp = await fetch('/api/save_gesture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gesture_name: name, features: data.features })
+      });
+
+      const saveData = await saveResp.json();
+      const statusEl = document.getElementById('status');
+      if (saveResp.ok) {
+        statusEl.textContent = `Saved "${name}"`;
+        updateGestureInfo();
+      } else {
+        statusEl.textContent = `Save failed: ${saveData.message || saveResp.status}`;
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error saving gesture');
+    }
+  }
+
+  async function updateGestureInfo() {
+    try {
+      const resp = await fetch('/api/gesture');
+      const data = await resp.json();
+      document.getElementById('gesture-name').textContent = data.gesture || '-';
+      document.getElementById('confidence').textContent = data.confidence ? (data.confidence*100).toFixed(1) + '%' : '-';
+      document.getElementById('saved-count').textContent = data.saved_gestures ?? 0;
+      lastSavedFeatures = data.features || null;
+    } catch (err) {
+      console.error('updateGestureInfo error', err);
+    }
+  }
+
+  async function toggleAutoSave() {
+    try {
+      const resp = await fetch('/api/auto_save/toggle', { method: 'POST' });
+      const data = await resp.json();
+      const btn = document.getElementById('auto-save-btn');
+      btn.textContent = data.auto_save_enabled ? 'Auto-save: ON' : 'Auto-save: OFF';
+      btn.style.background = data.auto_save_enabled ? '#16a34a' : '#6b7280';
+      document.getElementById('status').textContent = data.message || (data.auto_save_enabled ? 'Auto-save enabled' : 'Auto-save disabled');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to toggle auto-save');
+    }
+  }
+
+  function downloadExcel() {
+    window.location.href = '/api/download/excel';
+    document.getElementById('status').textContent = 'Downloading Excel...';
+  }
+
+  // Poll for updates
+  setInterval(updateGestureInfo, 600);
+  updateGestureInfo();
+</script>
+
+</body>
+</html>

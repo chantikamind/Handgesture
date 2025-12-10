@@ -1,0 +1,63 @@
+HAND GESTURE RECOGNITION - FITUR AUTOSAVE
+==========================================
+
+RINGKAS FITUR YANG SUDAH DITAMBAHKAN:
+
+✅ 1. WEB INTERFACE AUTO-SAVE
+   - Tombol toggle: "🤖 Auto-save: OFF/ON"
+   - Gesture tidak dikenal otomatis tersimpan
+   - Nama: unknown_0, unknown_1, dst
+   - Model otomatis dilatih
+   - Status visual: hijau (ON), abu-abu (OFF)
+
+✅ 2. DESKTOP APP AUTO-SAVE
+   - Tekan [a] untuk toggle
+   - Gesture tidak dikenal auto-save
+   - Nama: unknown_0, unknown_1, dst
+   - Console feedback setiap save
+
+✅ 3. SAFETY FEATURES
+   - Deduplikasi (tidak save gesture sama 2x)
+   - Counter otomatis
+   - Hash comparison (vec.tobytes())
+
+✅ 4. API ENDPOINTS
+   POST /api/auto_save/toggle     - Aktif/nonaktifkan
+   GET /api/auto_save/status      - Lihat status
+   POST /api/auto_save/reset      - Reset counter
+
+==========================================
+
+CARA MENGGUNAKAN:
+
+Di WEB:
+1. Buka http://localhost:5000
+2. Klik tombol "🤖 Auto-save: OFF"
+3. Tombol berubah menjadi hijau "🤖 Auto-save: ON"
+4. Tunjukkan gesture baru
+5. Otomatis disimpan sebagai unknown_0, unknown_1, dst
+6. Klik "Save Model" untuk menyimpan
+
+Di DESKTOP:
+1. Jalankan: python capture_gestures.py
+2. Tekan [a] untuk toggle auto-save
+3. Tunjukkan gesture baru
+4. Otomatis disimpan
+5. Tekan [s] untuk save model
+6. Tekan [q] untuk keluar
+
+==========================================
+
+KEYBOARD CONTROLS (capture_gestures.py):
+[t] - Manual save dengan auto-naming (gesture_0, gesture_1)
+[n] - Manual save dengan custom name
+[s] - Save model
+[a] - Toggle auto-save untuk gesture tidak dikenal
+[r] - Reset counter
+[q] - Quit
+
+==========================================
+
+STATUS: ✅ PRODUCTION READY
+
+System sudah siap digunakan!

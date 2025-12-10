@@ -1,0 +1,57 @@
+AUTO-SAVE FEATURE FOR UNKNOWN GESTURES
+=====================================
+
+Fitur baru yang telah ditambahkan:
+
+1. TOGGLE AUTO-SAVE
+   - Tombol "🤖 Auto-save: OFF" pada panel kontrol
+   - Klik untuk mengaktifkan/menonaktifkan auto-save
+   - Status ditampilkan dengan warna:
+     * Green (#4caf50) = AUTO-SAVE ENABLED
+     * Gray (#808080) = AUTO-SAVE DISABLED
+
+2. CARA KERJA
+   - Ketika auto-save DIAKTIFKAN:
+     * Setiap gesture yang TIDAK DIKENAL (idx == -2) akan otomatis disimpan
+     * Gesture diberi nama: unknown_0, unknown_1, unknown_2, dst
+     * Status di layar berubah menjadi "Auto-saved: unknown_X" (warna orange)
+     * Gesture otomatis dilatih ke model Fuzzy ART
+     * File JSON disimpan ke folder gesture_data/
+
+3. SAFETY FEATURES
+   - Deduplikasi: Gesture yang sama tidak akan disimpan berkali-kali
+   - Menggunakan vec.tobytes() untuk membandingkan feature vector
+   - Counter otomatis untuk penamaan
+
+4. API ENDPOINTS
+   POST /api/auto_save/toggle
+   - Toggle fitur auto-save
+   - Response: {auto_save_enabled, message}
+
+   GET /api/auto_save/status
+   - Cek status auto-save
+   - Response: {auto_save_enabled, unknown_counter, total_categories}
+
+   POST /api/auto_save/reset
+   - Reset counter unknown gesture ke 0
+   - Response: {message}
+
+5. GLOBAL VARIABLES (di app.py)
+   - auto_save_unknown: Boolean, status auto-save
+   - unknown_gesture_counter: Integer, counter untuk unknown gestures
+   - last_saved_gesture: Bytes, hash gesture terakhir yang disimpan (untuk deduplikasi)
+
+6. WORKFLOW CONTOH
+   a. User membuka web interface
+   b. User klik tombol "🤖 Auto-save: OFF"
+   c. Tombol berubah menjadi "🤖 Auto-save: ON" (hijau)
+   d. User menunjukkan gesture baru yang belum dilatih
+   e. Model mendeteksi sebagai "Tidak Dikenal" (merah)
+   f. Gesture otomatis disimpan sebagai "unknown_0"
+   g. Status berubah "Auto-saved: unknown_0" (oranye)
+   h. Counter naik menjadi unknown_1 untuk gesture berikutnya
+   i. User bisa klik "Save Model" untuk menyimpan perubahan
+
+7. FILE YANG DIMODIFIKASI
+   - app.py: Tambah global variables, logic auto-save, API endpoints
+   - templates/index.html: Tambah tombol, JS function toggleAutoSave()

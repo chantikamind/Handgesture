@@ -1,33 +1,39 @@
 id,name
 0,open hand
-1,peace
+1,unknown_12
 2,open hand
 3,metal
-4,fist
-5,thumbs up
+4,metal
+5,metal
 6,pointing
-7,thumbs down
+7,thumbsdown
 8,peace
 9,open hand
 10,open hand
-11,open hand
+11,metal
 12,peace
 13,ok
 14,ok
 15,terimakasih
 16,thumbs up
-17,open hand
-18,open hand
+17,gesture_0
+18,unknown_7
 19,open hand
 20,open hand
-21,open hand
-22,thumbs up
-23,thumbs up
+21,peace
+22,thumbsup
+23,thumbsup
 24,peace
-25,peace
-26,peace
-27,open hand
+25,unknown_13
+26,fist
+27,peace
 28,open hand
-29,open hand
+29,thumbs down
 30,open hand
-31,metal
+31,fist
+32,unknown_9
+33,thumbsup
+34,open hand
+35,unknown_11
+36,unknown_14
+37,fist
